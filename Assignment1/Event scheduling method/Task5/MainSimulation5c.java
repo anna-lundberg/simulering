@@ -7,7 +7,7 @@ import java.io.*;
 //Denna klass �rver Global s� att man kan anv�nda time och signalnamnen utan punktnotation
 //It inherits Proc so that we can use time and the signal names without dot notation
 
-public class MainSimulation5 extends Global5 {
+public class MainSimulation5c extends Global5 {
 
 	public static void main(String[] args) throws IOException {
 
@@ -39,7 +39,7 @@ public class MainSimulation5 extends Global5 {
 		Gen5 Generator = new Gen5();
 		Generator.lambda = 1.0 / 0.12; // Generator ska generera nio kunder per sekund //Generator shall generate 9
 		// customers per second
-		
+		// Round robin
 
 		// H�r nedan skickas de f�rsta signalerna f�r att simuleringen ska komma ig�ng.
 		// To start the simulation the first signals are put in the signal list
@@ -58,25 +58,36 @@ public class MainSimulation5 extends Global5 {
 			actSignal = SignalList5.FetchSignal();
 			time = actSignal.arrivalTime;
 			actSignal.destination.TreatSignal(actSignal);
-			int kö = (Generator.slump.nextInt(5) + 1);
-			// Slumpar vilken kö vi ska skicka till
 
-			if (kö == 1)
-				Generator.sendTo = Q1; // De genererade kunderna ska skickas till k�systemet QS // The generated
-										// customers shall be sent to Q1
-			if (kö == 2)
+			int min = Integer.MAX_VALUE;
+
+			int[] köer = new int[5];
+
+			köer[0] = Q1.numberInQueue;
+			köer[1] = Q2.numberInQueue;
+			köer[2] = Q3.numberInQueue;
+			köer[3] = Q4.numberInQueue;
+			köer[4] = Q5.numberInQueue;
+
+			for (int i = 0; i < köer.length; i++) {
+				if (köer[i] < min)
+					min = köer[i];
+			}
+			if (min == Q1.numberInQueue)
+				Generator.sendTo = Q1;
+			if (min == Q2.numberInQueue)
 				Generator.sendTo = Q2;
-			if (kö == 3)
+			if (min == Q3.numberInQueue)
 				Generator.sendTo = Q3;
-			if (kö == 4)
+			if (min == Q4.numberInQueue)
 				Generator.sendTo = Q4;
-			if (kö == 5)
+			if (min == Q5.numberInQueue)
 				Generator.sendTo = Q5;
+
 		}
 
 		// Slutligen skrivs resultatet av simuleringen ut nedan:
 		// Finally the result of the simulation is printed below:
-
 		System.out.println("Mean number of customers in queuing system: " + 1.0
 				* (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated)
 				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));

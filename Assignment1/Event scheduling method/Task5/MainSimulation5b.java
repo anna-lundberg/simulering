@@ -7,7 +7,7 @@ import java.io.*;
 //Denna klass �rver Global s� att man kan anv�nda time och signalnamnen utan punktnotation
 //It inherits Proc so that we can use time and the signal names without dot notation
 
-public class MainSimulation5 extends Global5 {
+public class MainSimulation5b extends Global5 {
 
 	public static void main(String[] args) throws IOException {
 
@@ -19,7 +19,7 @@ public class MainSimulation5 extends Global5 {
 
 		Signal5 actSignal;
 		new SignalList5();
-
+		int roundRobin = 0;
 		// H�r nedan skapas de processinstanser som beh�vs och parametrar i dem ges
 		// v�rden.
 		// Here process instances are created (two queues and one generator) and their
@@ -39,7 +39,7 @@ public class MainSimulation5 extends Global5 {
 		Gen5 Generator = new Gen5();
 		Generator.lambda = 1.0 / 0.12; // Generator ska generera nio kunder per sekund //Generator shall generate 9
 		// customers per second
-		
+		// Round robin
 
 		// H�r nedan skickas de f�rsta signalerna f�r att simuleringen ska komma ig�ng.
 		// To start the simulation the first signals are put in the signal list
@@ -58,25 +58,29 @@ public class MainSimulation5 extends Global5 {
 			actSignal = SignalList5.FetchSignal();
 			time = actSignal.arrivalTime;
 			actSignal.destination.TreatSignal(actSignal);
-			int kö = (Generator.slump.nextInt(5) + 1);
-			// Slumpar vilken kö vi ska skicka till
+			roundRobin++;
+			if (roundRobin == 6) {
+				roundRobin = 1;
+			}
 
-			if (kö == 1)
-				Generator.sendTo = Q1; // De genererade kunderna ska skickas till k�systemet QS // The generated
-										// customers shall be sent to Q1
-			if (kö == 2)
+			if (roundRobin == 1) {
+				Generator.sendTo = Q1;
+			}
+
+			else if (roundRobin == 2) {
 				Generator.sendTo = Q2;
-			if (kö == 3)
+			} else if (roundRobin == 3) {
 				Generator.sendTo = Q3;
-			if (kö == 4)
+			} else if (roundRobin == 4) {
 				Generator.sendTo = Q4;
-			if (kö == 5)
+			} else if (roundRobin == 5) {
 				Generator.sendTo = Q5;
+			}
 		}
 
 		// Slutligen skrivs resultatet av simuleringen ut nedan:
 		// Finally the result of the simulation is printed below:
-
+		System.out.println(Q1.accumulated);
 		System.out.println("Mean number of customers in queuing system: " + 1.0
 				* (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated)
 				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));
@@ -85,11 +89,11 @@ public class MainSimulation5 extends Global5 {
 
 		System.out.println("Measurements: "
 				+ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));
+
 		System.out.println("Mean number of customers in queuing system 1: " + 1.0 * Q1.accumulated / Q1.noMeasurements);
 		System.out.println("Mean number of customers in queuing system 2: " + 1.0 * Q2.accumulated / Q2.noMeasurements);
 		System.out.println("Mean number of customers in queuing system 3: " + 1.0 * Q3.accumulated / Q3.noMeasurements);
 		System.out.println("Mean number of customers in queuing system 4: " + 1.0 * Q4.accumulated / Q4.noMeasurements);
 		System.out.println("Mean number of customers in queuing system 5: " + 1.0 * Q5.accumulated / Q5.noMeasurements);
-
 	}
 }
