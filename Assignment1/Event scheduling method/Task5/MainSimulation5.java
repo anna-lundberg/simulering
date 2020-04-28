@@ -39,7 +39,6 @@ public class MainSimulation5 extends Global5 {
 		Gen5 Generator = new Gen5();
 		Generator.lambda = 1.0 / 0.12; // Generator ska generera nio kunder per sekund //Generator shall generate 9
 		// customers per second
-		
 
 		// H�r nedan skickas de f�rsta signalerna f�r att simuleringen ska komma ig�ng.
 		// To start the simulation the first signals are put in the signal list
@@ -54,16 +53,15 @@ public class MainSimulation5 extends Global5 {
 		// Detta �r simuleringsloopen:
 		// This is the main loop
 
-		while (time < 100000) {
+		while (time < 200000) {
 			actSignal = SignalList5.FetchSignal();
-			time = actSignal.arrivalTime;
-			actSignal.destination.TreatSignal(actSignal);
+
 			int kö = (Generator.slump.nextInt(5) + 1);
 			// Slumpar vilken kö vi ska skicka till
 
 			if (kö == 1)
 				Generator.sendTo = Q1; // De genererade kunderna ska skickas till k�systemet QS // The generated
-										// customers shall be sent to Q1
+										// customers shall be sent to Q1-Q5				
 			if (kö == 2)
 				Generator.sendTo = Q2;
 			if (kö == 3)
@@ -72,14 +70,26 @@ public class MainSimulation5 extends Global5 {
 				Generator.sendTo = Q4;
 			if (kö == 5)
 				Generator.sendTo = Q5;
+
+			time = actSignal.arrivalTime;
+			actSignal.destination.TreatSignal(actSignal);
 		}
 
 		// Slutligen skrivs resultatet av simuleringen ut nedan:
 		// Finally the result of the simulation is printed below:
+		System.out.println("Mean time in system: " + 1.0
+				* (Q1.accumulatedTime + Q2.accumulatedTime + Q3.accumulatedTime + Q4.accumulatedTime
+						+ Q5.accumulatedTime)
+				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements)/5);
+
+		System.out.println("Little: " +(1/0.12)*(Q1.accumulatedTime + Q2.accumulatedTime + Q3.accumulatedTime + Q4.accumulatedTime
+				+ Q5.accumulatedTime)
+		/ (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated));
 
 		System.out.println("Mean number of customers in queuing system: " + 1.0
 				* (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated)
 				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));
+
 		System.out.println(
 				"Accumulated: " + (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated));
 

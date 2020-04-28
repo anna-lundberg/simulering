@@ -5,8 +5,8 @@ class State extends GlobalSimulation {
 
 	// Here follows the state variables and other variables that might be needed
 	// e.g. for measurements
-	public int numberInQueue1 = 0, numberInQueue2 = 0, accumulated = 0, noMeasurements = 0, noRejected = 0,
-			noArrivals = 0, accumulated1 =0, accumulated2 =0;
+	public double numberInQueue1 = 0, numberInQueue2 = 0, accumulated = 0, noMeasurements = 0, noRejected = 0,
+			noArrivals = 0, accumulated1 = 0, accumulated2 = 0;
 
 	Random slump = new Random(); // This is just a random number generator
 
@@ -41,28 +41,27 @@ class State extends GlobalSimulation {
 		noArrivals++;
 		// if numbers <10 gör det här annars rejected
 
-	
-	 if (numberInQueue1 < 10) {
+		if (numberInQueue1 < 10) {
 
 			if (numberInQueue1 == 0) {
-				insertEvent(READY1, time + Math.log(1 - slump.nextDouble()) / (- 1.0/2.1));
+				insertEvent(READY1, time + 1.0*Math.log(1 - slump.nextDouble()) / (-(1.0 / 2.1)));
 			}
-
 			numberInQueue1++;
-			insertEvent(ARRIVAL, time + 5.0); //Uppdateras till 1, 2, 5
 		} else {
-				noRejected++;
+			noRejected++;
 		}
+		insertEvent(ARRIVAL, time + 5.0); // Uppdateras till 1, 2, 5
+
 	}
 
 	private void ready1() {
 		numberInQueue1--;
-		if (numberInQueue2 == 0) {
+		if (numberInQueue2 == 0)
 			insertEvent(READY2, time + 2.0);
-		}
+
 		numberInQueue2++;
 		if (numberInQueue1 > 0)
-			insertEvent(READY1, time + Math.log(1 - slump.nextDouble()) / (-1.0/2.1));
+			insertEvent(READY1, time + 1.0*Math.log(1 - slump.nextDouble()) / (-(1.0 / 2.1)));
 
 	}
 
@@ -79,7 +78,7 @@ class State extends GlobalSimulation {
 		accumulated2 = accumulated2 + numberInQueue2;
 
 		noMeasurements++;
-		insertEvent(MEASURE, time + Math.log(1 - slump.nextDouble()) / (-1.0/5.0));
+		insertEvent(MEASURE, time + 1.0*Math.log(1 - slump.nextDouble()) / (-(1.0 / 5.0)));
 
 	}
 }

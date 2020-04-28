@@ -12,7 +12,7 @@ public class MainSimulation extends GlobalSimulation{
         insertEvent(MEASURE, 5);
     
         // The main simulation loop
-    	while (time < 6000) { 
+    	while (time < 5000) { 
     		actEvent = eventList.fetchEvent();
     		time = actEvent.eventTime;
     		actState.treatEvent(actEvent);
@@ -23,11 +23,11 @@ public class MainSimulation extends GlobalSimulation{
 		System.out.println("Totalt i systemet: " + actState.accumulated);
 		System.out.println("Totalt arrivals: " + actState.noArrivals);
 		System.out.println("Number of measurements: " +actState.noMeasurements);
-		System.out.println("Mean in line 1: " + 1.0 * actState.accumulated1 / actState.noMeasurements);
-		System.out.println("Mean in line 2: " + 1.0 * actState.accumulated2 / actState.noMeasurements);
-		System.out.println("Number rejected: " + actState.noRejected);
-		System.out.println("Accumulated: " + actState.accumulated);
-		System.out.println("Probability of being rejected: " + 1.0*actState.noRejected / (actState.noArrivals));
+		System.out.println("Mean in line 1: " + 1.0 * (actState.accumulated1 / actState.noMeasurements));
+		System.out.println("Mean in line 2: " + 1.0 * (actState.accumulated / actState.noMeasurements));
+		System.out.println("Number rejected: " + 1.0*actState.noRejected);
+		System.out.println("Accumulated: " + 1.0*actState.accumulated);
+		System.out.println("Probability of being rejected: " + 1.0*actState.noRejected / (1.0*actState.noArrivals));
 
     }
 }

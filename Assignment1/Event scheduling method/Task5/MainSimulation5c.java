@@ -85,9 +85,13 @@ public class MainSimulation5c extends Global5 {
 				Generator.sendTo = Q5;
 
 		}
-
 		// Slutligen skrivs resultatet av simuleringen ut nedan:
 		// Finally the result of the simulation is printed below:
+		System.out.println("Mean time in system: " + 1.0
+				* (Q1.accumulatedTime + Q2.accumulatedTime + Q3.accumulatedTime + Q4.accumulatedTime
+						+ Q5.accumulatedTime)
+				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));
+
 		System.out.println("Mean number of customers in queuing system: " + 1.0
 				* (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated)
 				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));

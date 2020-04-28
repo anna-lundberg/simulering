@@ -8,13 +8,17 @@ class State6 extends GlobalSimulation6 {
 	// Here follows the state variables and other variables that might be needed
 	// e.g. for measurements
 	public int numberInQueue = 0, numberServed = 0, accumulated = 0, noMeasurements = 0, noArrivals = 0, noRejected = 0;
-	public double timeMeasured = 0, timeCustomer = 0, accumulatedTime = 0, timeOfDay = 9.00 ;
+	public double timeMeasured = 0, lastJob = 0, accumulatedTime = 0, timeOfDay = 0.0, arrivalTime = 0,
+			departureTime = 0;
 	Random slump = new Random(); // This is just a random number generator
+	List<Double> arrivalTimes = new ArrayList<Double>();
+	List<Double> departureTimes = new ArrayList<Double>();
 
 	// The following method is called by the main program each time a new event has
 	// been fetched
 	// from the event list in the main loop.
-	public void treatEvent(Event6 x) {		switch (x.eventType) {
+	public void treatEvent(Event6 x) {
+		switch (x.eventType) {
 		case ARRIVAL:
 			arrival();
 			break;
@@ -35,34 +39,49 @@ class State6 extends GlobalSimulation6 {
 	// things are getting more complicated than this.
 
 	private void arrival() {
-		timeCustomer = GlobalSimulation6.time;
-		noArrivals++;
-		// if numbers <10 gör det här annars rejected
+		arrivalTimes.add(time);
 
-		if (timeOfDay + GlobalSimulation6.time < 17.00) {
-			insertEvent(READY, time + x);
+		if (timeOfDay + time <= 28800) {
+			noArrivals++;
+
+			if (numberInQueue == 0) {
+				insertEvent(READY, time + (600.0 + 600.0 * slump.nextDouble()));
+
+			}
 
 		} else {
 			noRejected++;
 		}
-		insertEvent(ARRIVAL, time + 1.0 * Math.log(1 - slump.nextDouble()) / (-1.0 * lambda));
+
+		insertEvent(ARRIVAL, time + 1.0 * Math.log(1 - slump.nextDouble()) / (-1.0 / 4.0));
 
 	}
 
 	private void ready() {
 		numberServed++;
-		timeMeasured = GlobalSimulation6.time - timeCustomer;
+		departureTimes.add(time);
+
+		insertEvent(READY, time + (600.0 + 600.0 * slump.nextDouble()));
+
+		timeInSystem();
+		lastJob = departureTime;
 
 	}
 
 	private void measure() {
-		accumulated = accumulated + numberServed; //får konstigt resultat, kan vara fel i alla uppgifter :) 
+		accumulated = accumulated + numberServed;
 		accumulatedTime = accumulatedTime + timeMeasured;
 		noMeasurements++;
-		insertEvent(MEASURE, time + T);
-		System.out.println(accumulated);
-		
-		
+		insertEvent(MEASURE, time + 1);
+
 	}
 
+	private void timeInSystem() {
+		// Method to calculate the time for every customer
+		arrivalTime = arrivalTimes.remove(0);
+		departureTime = departureTimes.remove(0);
+		// Calculate average time spent in the system
+		accumulatedTime = accumulatedTime + (departureTime - arrivalTime);
+
+	}
 }

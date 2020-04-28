@@ -37,7 +37,9 @@ public class MainSimulation5b extends Global5 {
 		Q5.sendTo = null;
 
 		Gen5 Generator = new Gen5();
-		Generator.lambda = 1.0 / 0.12; // Generator ska generera nio kunder per sekund //Generator shall generate 9
+		Generator.lambda = 1.0 / 0.12;
+		Generator.sendTo = Q1;
+		// Generator ska generera nio kunder per sekund //Generator shall generate 9
 		// customers per second
 		// Round robin
 
@@ -54,33 +56,46 @@ public class MainSimulation5b extends Global5 {
 		// Detta �r simuleringsloopen:
 		// This is the main loop
 
-		while (time < 100000) {
+		while (time < 10000) {
 			actSignal = SignalList5.FetchSignal();
+			if (actSignal.signalType == ARRIVAL) {
+				roundRobin++;
+				if (roundRobin == 6) {
+					roundRobin = 1;
+				}
+
+				if (roundRobin == 1) {
+					Generator.sendTo = Q1;
+				}
+
+				else if (roundRobin == 2) {
+					Generator.sendTo = Q2;
+				} else if (roundRobin == 3) {
+					Generator.sendTo = Q3;
+				} else if (roundRobin == 4) {
+					Generator.sendTo = Q4;
+				} else {
+					Generator.sendTo = Q5;
+				}
+			}
 			time = actSignal.arrivalTime;
 			actSignal.destination.TreatSignal(actSignal);
-			roundRobin++;
-			if (roundRobin == 6) {
-				roundRobin = 1;
-			}
-
-			if (roundRobin == 1) {
-				Generator.sendTo = Q1;
-			}
-
-			else if (roundRobin == 2) {
-				Generator.sendTo = Q2;
-			} else if (roundRobin == 3) {
-				Generator.sendTo = Q3;
-			} else if (roundRobin == 4) {
-				Generator.sendTo = Q4;
-			} else if (roundRobin == 5) {
-				Generator.sendTo = Q5;
-			}
 		}
 
 		// Slutligen skrivs resultatet av simuleringen ut nedan:
 		// Finally the result of the simulation is printed below:
-		System.out.println(Q1.accumulated);
+		System.out.println("Mean time in system: " + 1.0
+				* (Q1.accumulatedTime + Q2.accumulatedTime + Q3.accumulatedTime + Q4.accumulatedTime
+						+ Q5.accumulatedTime)
+				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));
+		System.out.println("Mean time in system: " + 1.0
+				* (Q1.accumulatedTime + Q2.accumulatedTime + Q3.accumulatedTime + Q4.accumulatedTime
+						+ Q5.accumulatedTime)
+				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements)/5);
+
+		System.out.println("Little: " +(1/0.12)*(Q1.accumulatedTime + Q2.accumulatedTime + Q3.accumulatedTime + Q4.accumulatedTime
+				+ Q5.accumulatedTime)
+		/ (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated)/5);
 		System.out.println("Mean number of customers in queuing system: " + 1.0
 				* (Q1.accumulated + Q2.accumulated + Q3.accumulated + Q4.accumulated + Q5.accumulated)
 				/ (Q1.noMeasurements + Q2.noMeasurements + Q3.noMeasurements + Q4.noMeasurements + Q5.noMeasurements));

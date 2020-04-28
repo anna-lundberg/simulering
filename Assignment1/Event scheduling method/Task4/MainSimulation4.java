@@ -13,7 +13,7 @@ public class MainSimulation4 extends GlobalSimulation4{
         insertEvent(MEASURE, 5);
     
         // The main simulation loop
-    	while (time < 1005) { 
+    	while (time < 16005) { 
     		actEvent = eventList.fetchEvent();
     		time = actEvent.eventTime;
     		actState.treatEvent(actEvent);
@@ -28,8 +28,8 @@ public class MainSimulation4 extends GlobalSimulation4{
 		System.out.println("Number served: " + actState.numberServed);
 
 		System.out.println("Rejected: " + 1.0*actState.noRejected);
+		actState.W.close();
 
-		System.out.println("Mean time in system: " + 1.0*actState.accumulatedTime/actState.noMeasurements);
 
     }
 }

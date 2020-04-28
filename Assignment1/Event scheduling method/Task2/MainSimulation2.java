@@ -15,7 +15,7 @@ public class MainSimulation2 extends GlobalSimulation2{
 
     
         // The main simulation loop
-    	while ( time < 120) { //&& actState.noMeasurements==1000){
+    	while ( time < 1000) { //&& actState.noMeasurements==1000){
     		actEvent = eventList.fetchEvent();
     		time = actEvent.eventTime;
     		actState.treatEvent(actEvent);

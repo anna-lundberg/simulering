@@ -1,50 +1,59 @@
-package Task5;
+package Task6a;
 
 import java.util.*;
 import java.io.*;
 
 // This class defines a simple queuing system with one server. It inherits Proc so that we can use time and the
 // signal names without dot notation
-class QS5 extends Proc5 {
-	public int numberInQueue = 0, accumulated, noMeasurements, arrivals;
-	public Proc5 sendTo;
-	public double departureTime = 0, arrivalTime = 0, accumulatedTime = 0;
+class QS6 extends Proc6 {
+	public int numberInQueue = 0, accumulated, noMeasurements, arrivals, noRejected;
+	public Proc6 sendTo;
+	public double departureTime = 0, arrivalTime = 0, accumulatedTime = 0, timeOfDay = 0.0, lastJob = 0;
 
 	Random slump = new Random();
 	List<Double> arrivalTimes = new ArrayList<Double>();
 	List<Double> departureTimes = new ArrayList<Double>();
 
-	public void TreatSignal(Signal5 x) {
+
+	public void TreatSignal(Signal6 x) {
 		switch (x.signalType) {
 
 		case ARRIVAL: {
+
 			arrivals++;
-			numberInQueue++;
 			arrivalTimes.add(time);
 
-			if (numberInQueue == 1) {
-				SignalList5.SendSignal(READY, this, time + 1.0 * Math.log(1 - slump.nextDouble()) / (-1.0 / 0.5));
-			}
+			if (timeOfDay + time <= 28800) {
+				numberInQueue++;
 
+				if (numberInQueue == 1) {
+				
+				SignalList6.SendSignal(READY, this, time + (600.0 + 600.0 * slump.nextDouble()));
+			}
+			}
+			
+			else if (timeOfDay + time > 28000) {
+				noRejected++;
+			}
 		}
 			break;
 
 		case READY: {
-			numberInQueue--;
 
 			departureTimes.add(time);
 
+			numberInQueue--;
+
 			if (sendTo != null) {
-				SignalList5.SendSignal(ARRIVAL, sendTo, time);
+				SignalList6.SendSignal(ARRIVAL, sendTo, time);
 			}
 			if (numberInQueue > 0) {
-				SignalList5.SendSignal(READY, this, time + 1.0 * Math.log(1 - slump.nextDouble()) / (-1.0 / 0.5));
+				SignalList6.SendSignal(READY, this, time + (600.0 + 600.0 * slump.nextDouble()));
 			}
+			timeInSystem();
 
 		}
-		
-			if((arrivalTimes.get(0)) != null)
-			timeInSystem();
+
 			break;
 
 		case MEASURE: {
@@ -52,11 +61,12 @@ class QS5 extends Proc5 {
 			noMeasurements++;
 			accumulated = accumulated + numberInQueue;
 
-			SignalList5.SendSignal(MEASURE, this, time + 1);
-			
+			SignalList6.SendSignal(MEASURE, this, time + 1);
+
 		}
 			break;
 		}
+
 	}
 
 	private void timeInSystem() {
@@ -65,6 +75,7 @@ class QS5 extends Proc5 {
 		departureTime = departureTimes.remove(0);
 		// Calculate average time spent in the system
 		accumulatedTime = accumulatedTime + (departureTime - arrivalTime);
+		lastJob = departureTime;
 
 	}
 }
